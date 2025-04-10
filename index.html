@@ -204,6 +204,13 @@
       font-size: 1.2em; /* Adjust size when not in DM mode */
       max-width: 300px;
     }
+
+    /* Smaller and left-positioned DM button in DM mode */
+    .dm-mode #toggleDMMode {
+      left: 0.2in; /* Move to the left */
+      width: 30%; /* Make it smaller */
+      font-size: 1em; /* Adjust size */
+    }
   </style>
 
   <script type="module">
@@ -298,6 +305,9 @@
         dmMessageInput.style.display = 'inline-block';
 
         viewerElements.forEach(element => element.classList.remove('viewer')); // Show viewer elements in DM mode
+
+        // Apply the DM-specific button style
+        document.body.classList.add('dm-mode');
       } else {
         // When not in DM mode, hide the DM controls
         dmControls.classList.remove('dm-only');
@@ -308,6 +318,9 @@
 
         // Hide the clear message button in non-DM mode
         document.getElementById('clearMessagesBtn').style.display = 'none';
+
+        // Remove the DM-specific button style
+        document.body.classList.remove('dm-mode');
       }
     }
 
@@ -324,13 +337,13 @@
       </div>
     </div>
 
-    <div id="messageDisplay">Waiting for message...</div>
+    <div id="messageDisplay"></div>
 
     <div id="dmControls">
-      <input type="text" id="dmMessageInput" class="dm-only" placeholder="Type a message..." />
-      <button id="sendMessageBtn" class="dm-only">Send Message</button>
-      <button id="clearMessagesBtn">Clear Messages</button>
       <button id="toggleDMMode">Toggle DM Mode</button>
+      <input type="text" id="dmMessageInput" class="viewer" placeholder="Enter your DM message here" />
+      <button id="sendMessageBtn" class="viewer">Send Message</button>
+      <button id="clearMessagesBtn" class="viewer">Clear Messages</button>
     </div>
   </div>
 </body>
