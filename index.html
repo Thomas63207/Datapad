@@ -9,16 +9,16 @@
   <style>
     /* Define the custom Moonhouse font */
     @font-face {
-      font-family: 'Moonhouse'; 
-      src: url('Moonhouse-yE5M.ttf') format('truetype'); 
+      font-family: 'Moonhouse'; /* Custom name for the font */
+      src: url('Moonhouse-yE5M.ttf') format('truetype'); /* Path to the font file */
       font-weight: normal;
       font-style: normal;
     }
 
     body {
       background-color: black;
-      color: rgb(145, 240, 249); 
-      font-family: 'Moonhouse', Courier, monospace; 
+      color: rgb(145, 240, 249); /* Light cyan text */
+      font-family: 'Moonhouse', Courier, monospace; /* Apply custom Moonhouse font */
       margin: 0;
       padding: 0;
       display: flex;
@@ -28,24 +28,19 @@
       flex-direction: column;
     }
 
-    h2 {
-      margin-top: 0;
-      text-align: center;
-    }
-
     #messageDisplay {
       width: 80vw;
       height: 70vh;
       overflow-y: auto;
-      overflow-x: hidden; 
-      border: 2px solid rgb(145, 240, 249); 
+      overflow-x: hidden; /* Prevent horizontal scrolling */
+      border: 2px solid rgb(145, 240, 249); /* Light cyan border */
       padding: 10px;
       background-color: black;
       margin-bottom: 20px;
       font-size: 1.2em;
-      white-space: normal; 
-      word-wrap: break-word; 
-      line-height: 1.6; 
+      white-space: normal; /* Allow text to wrap naturally */
+      word-wrap: break-word; /* Break long words if necessary */
+      line-height: 1.6; /* Spacing between lines for better readability */
     }
 
     #dmControls {
@@ -60,11 +55,11 @@
       font-family: 'Moonhouse', Courier, monospace;
       padding: 10px;
       background-color: black;
-      color: rgb(145, 240, 249); 
-      border: 2px solid rgb(145, 240, 249); 
+      color: rgb(145, 240, 249); /* Light cyan text */
+      border: 2px solid rgb(145, 240, 249); /* Light cyan border */
       font-size: 1.1em;
-      width: 80%; 
-      max-width: 500px; 
+      width: 80%; /* Make inputs take up most of the width */
+      max-width: 500px; /* Limit width */
     }
 
     button {
@@ -72,7 +67,7 @@
     }
 
     button:hover {
-      background-color: rgb(145, 240, 249); 
+      background-color: rgb(145, 240, 249); /* Light cyan background on hover */
       color: black;
     }
 
@@ -84,38 +79,23 @@
       display: block;
     }
 
-    #bars, #barsDown {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      height: 50px;
-      width: 100%;
-      overflow: hidden;
-      margin-top: 20px;
+    /* Adjust margins and text for better fit */
+    #messageDisplay {
+      margin-top: 10px;
     }
 
-    .bar {
-      width: 5px;
-      height: 20px;
-      background-color: rgb(145, 240, 249); 
-      margin: 0 2px;
-      animation: wave 1s infinite ease-in-out;
+    /* Make text look like it’s from a Star Wars screen */
+    ::-webkit-scrollbar {
+      width: 10px;
     }
 
-    .bar:nth-child(even) {
-      animation-delay: -0.5s;
+    ::-webkit-scrollbar-thumb {
+      background-color: rgb(145, 240, 249); /* Light cyan scrollbar thumb */
+      border-radius: 5px;
     }
 
-    @keyframes wave {
-      0% {
-        height: 20px;
-      }
-      50% {
-        height: 50px;
-      }
-      100% {
-        height: 20px;
-      }
+    ::-webkit-scrollbar-track {
+      background-color: #000;
     }
 
     /* Mobile responsiveness */
@@ -126,12 +106,49 @@
 
       #messageDisplay {
         width: 100%;
-        height: 50vh;
+        height: 50vh; /* Adjust for smaller screens */
       }
 
       input, button {
-        width: 100%; 
-        font-size: 1em;
+        width: 100%; /* Make buttons and inputs full-width on small screens */
+        font-size: 1em; /* Adjust font size */
+      }
+    }
+
+    /* Animation for the bars */
+    #bars, #barsDown {
+      display: flex;
+      justify-content: space-evenly; /* Space bars evenly across the container */
+      align-items: center;
+      width: 100%;
+      height: 50px; /* Set the height of the bar container */
+    }
+
+    .bar {
+      background-color: rgb(145, 240, 249);
+      width: 15px; /* Set the width of each bar */
+      height: 30px;
+      animation: barAnimation 1s ease-in-out infinite;
+    }
+
+    .bar:nth-child(odd) {
+      animation-duration: 1.2s;
+    }
+
+    .bar:nth-child(even) {
+      animation-duration: 1.4s;
+    }
+
+    /* Keyframes for bar animation */
+    @keyframes barAnimation {
+      0% {
+        height: 30px;
+      }
+      50% {
+        height: 60px;
+      }
+      100% {
+        height: 30px;
       }
     }
   </style>
@@ -155,7 +172,7 @@
     const analytics = getAnalytics(app);
     const database = getDatabase();
 
-    let isDM = true;
+    let isDM = true; 
 
     document.getElementById('toggleDMMode').addEventListener('click', function() {
       isDM = !isDM;
@@ -185,7 +202,7 @@
       const messagesRef = ref(database, 'messages');
       remove(messagesRef).then(() => {
         console.log("Messages cleared from Firebase!");
-      }).catch((error) => {
+      }).catch((error) {
         console.error("Error clearing messages: ", error);
       });
     });
@@ -223,15 +240,19 @@
       const dmOnlyElements = document.querySelectorAll('.dm-only');
 
       if (isDM) {
+        // When in DM mode, show all DM controls (message input and send button)
         dmControls.classList.add('dm-only');
         sendMessageBtn.classList.add('dm-only');
         dmMessageInput.classList.add('dm-only');
         viewerElements.forEach(element => element.classList.remove('viewer'));
       } else {
+        // When not in DM mode, hide the send and clear message buttons, and show only DM toggle and message input
         dmControls.classList.remove('dm-only');
         sendMessageBtn.classList.remove('dm-only');
         dmMessageInput.classList.remove('dm-only');
         viewerElements.forEach(element => element.classList.add('viewer'));
+
+        // Hide buttons for sending/clearing messages in non-DM mode
         sendMessageBtn.style.display = 'none';
         document.getElementById('clearMessagesBtn').style.display = 'none';
       }
@@ -242,8 +263,10 @@
 </head>
 <body>
   <div>
-    <h2>DM Message Board</h2>
+    <!-- Removed "DM message board" text -->
+    
     <div id="bars">
+      <!-- First set of animated bars -->
       <div class="bar"></div>
       <div class="bar"></div>
       <div class="bar"></div>
@@ -251,6 +274,7 @@
       <div class="bar"></div>
     </div>
     <div id="barsDown">
+      <!-- Second set of animated bars -->
       <div class="bar"></div>
       <div class="bar"></div>
       <div class="bar"></div>
@@ -259,7 +283,7 @@
     </div>
 
     <div id="messageDisplay">Waiting for message...</div>
-    
+
     <div id="dmControls">
       <input type="text" id="dmMessageInput" class="dm-only" placeholder="Type a message..." />
       <button id="sendMessageBtn" class="dm-only">Send Message</button>
