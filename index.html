@@ -7,10 +7,18 @@
 
   <!-- Include custom font -->
   <style>
+    /* Define the custom Moonhouse font */
+    @font-face {
+      font-family: 'Moonhouse'; /* Custom name for the font */
+      src: url('Moonhouse-yE5M.ttf') format('truetype'); /* Path to the font file */
+      font-weight: normal;
+      font-style: normal;
+    }
+
     body {
       background-color: black;
       color: rgb(145, 240, 249); /* Light cyan text */
-      font-family: Courier, monospace; /* Default monospace font */
+      font-family: 'Moonhouse', Courier, monospace; /* Apply custom Moonhouse font */
       margin: 0;
       padding: 0;
       display: flex;
@@ -44,10 +52,11 @@
       align-items: center;
       width: 80%; /* Adjust to make sure controls don't stretch too wide */
       max-width: 500px;
+      position: relative;
     }
 
     input, button {
-      font-family: Courier, monospace;
+      font-family: 'Moonhouse', Courier, monospace;
       padding: 10px;
       background-color: black;
       color: rgb(145, 240, 249); /* Light cyan text */
@@ -70,12 +79,27 @@
       display: none;
     }
 
-    #toggleDMMode {
+    .dm-only {
       display: block;
     }
 
-    .invisible {
-      display: none;
+    /* Adjust margins and text for better fit */
+    #messageDisplay {
+      margin-top: 10px;
+    }
+
+    /* Make text look like it’s from a Star Wars screen */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgb(145, 240, 249); /* Light cyan scrollbar thumb */
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: #000;
     }
 
     /* Mobile responsiveness */
@@ -93,6 +117,97 @@
         width: 100%; /* Make buttons and inputs full-width on small screens */
         font-size: 1em; /* Adjust font size */
       }
+    }
+
+    /* The animated bars styling */
+    #barsContainer {
+      width: 80%;
+      display: flex;
+      justify-content: center;
+      gap: 5px; /* Adjust spacing between bars */
+      margin-bottom: 10px; /* Space between bars and text box */
+      margin-left: auto;
+    }
+
+    .bars {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .bars div {
+      width: 6px; /* Slightly wider bars */
+      height: 30px;
+      background-color: rgb(145, 240, 249);
+      animation: wave 0.8s ease-in-out infinite;
+    }
+
+    .bars div:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .bars div:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .bars div:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .bars div:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .bars div:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .bars div:nth-child(6) {
+      animation-delay: 0.5s;
+    }
+
+    .bars div:nth-child(7) {
+      animation-delay: 0.6s;
+    }
+
+    .bars div:nth-child(8) {
+      animation-delay: 0.7s;
+    }
+
+    .bars div:nth-child(9) {
+      animation-delay: 0.8s;
+    }
+
+    .bars div:nth-child(10) {
+      animation-delay: 0.9s;
+    }
+
+    /* Keyframe animation for the bars */
+    @keyframes wave {
+      0% {
+        height: 30px;
+      }
+      50% {
+        height: 60px;
+      }
+      100% {
+        height: 30px;
+      }
+    }
+
+    /* Positioning and size for the toggle DM mode button */
+    #toggleDMMode {
+      position: absolute;
+      top: 50px; /* Adjusted so it's a bit below the text box */
+      left: 0.5in; /* Moves it a half inch from the left edge */
+      width: 50%; /* Make it stretch to about the center of the screen */
+      font-size: 1.1em; /* Same font size as other buttons */
+      max-width: 300px;
+    }
+
+    /* Hide the button when not in DM mode */
+    .dm-mode #toggleDMMode {
+      display: none;
     }
   </style>
 
@@ -176,44 +291,65 @@
     });
 
     function updateView() {
-      const toggleDMModeBtn = document.getElementById('toggleDMMode');
+      const dmControls = document.getElementById('dmControls');
       const sendMessageBtn = document.getElementById('sendMessageBtn');
       const dmMessageInput = document.getElementById('dmMessageInput');
       const viewerElements = document.querySelectorAll('.viewer');
 
       if (isDM) {
         // When in DM mode, show DM controls (message input and send button)
+        dmControls.classList.add('dm-only');
         sendMessageBtn.style.display = 'inline-block';
         dmMessageInput.style.display = 'inline-block';
 
         viewerElements.forEach(element => element.classList.remove('viewer')); // Show viewer elements in DM mode
 
-        toggleDMModeBtn.classList.remove('invisible');
+        // Apply the DM-specific button style
+        document.body.classList.add('dm-mode');
       } else {
-        // When not in DM mode, hide the DM controls
+        // Hide DM controls when not in DM mode
+        dmControls.classList.remove('dm-only');
         sendMessageBtn.style.display = 'none';
         dmMessageInput.style.display = 'none';
 
         viewerElements.forEach(element => element.classList.add('viewer')); // Hide viewer elements when not in DM mode
 
-        toggleDMModeBtn.classList.add('invisible');
+        // Remove the DM-specific button style
+        document.body.classList.remove('dm-mode');
       }
     }
 
-    // Call updateView initially to make sure it’s set to the correct state
-    updateView();
+    window.onload = function() {
+      updateView();
+    };
   </script>
 </head>
 <body>
-  <div>
-    <div id="messageDisplay"></div>
 
-    <div id="dmControls">
-      <button id="toggleDMMode">Toggle DM Mode</button>
-      <input type="text" id="dmMessageInput" class="viewer" placeholder="Enter your DM message here" />
-      <button id="sendMessageBtn" class="viewer">Send Message</button>
-      <button id="clearMessagesBtn" class="viewer">Clear Messages</button>
+  <div id="messageDisplay"></div>
+
+  <div id="dmControls" class="viewer">
+    <input type="text" id="dmMessageInput" placeholder="Type your message...">
+    <button id="sendMessageBtn">Send Message</button>
+    <button id="clearMessagesBtn">Clear Messages</button>
+    <div id="barsContainer" class="viewer">
+      <div class="bars">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   </div>
+
+  <!-- DM Mode Toggle Button -->
+  <button id="toggleDMMode">Toggle DM Mode</button>
+
 </body>
 </html>
