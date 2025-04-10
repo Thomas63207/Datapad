@@ -26,6 +26,7 @@
       align-items: center;
       height: 100vh;
       flex-direction: column;
+      overflow: hidden; /* Prevent body overflow */
     }
 
     #messageDisplay {
@@ -116,32 +117,64 @@
     }
 
     /* The animated bars styling */
-    #bars, #barsDown {
-      display: flex;
-      justify-content: space-between;
+    #barsContainer {
       width: 80%;
-      position: relative;
-      top: 50px; /* Adjust the position */
+      display: flex;
+      justify-content: center;
+      gap: 5px; /* Adjust spacing between bars */
     }
 
     .bars {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      position: relative;
-      top: 0;
     }
 
     .bars div {
-      width: 8px;
-      height: 40px;
+      width: 6px; /* Slightly wider bars */
+      height: 30px;
       background-color: rgb(145, 240, 249);
-      border-radius: 5px;
-      animation: wave 1.5s ease-in-out infinite alternate;
+      animation: wave 0.8s ease-in-out infinite;
     }
 
-    #barsDown div {
+    .bars div:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .bars div:nth-child(2) {
       animation-delay: 0.1s;
+    }
+
+    .bars div:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .bars div:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .bars div:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .bars div:nth-child(6) {
+      animation-delay: 0.5s;
+    }
+
+    .bars div:nth-child(7) {
+      animation-delay: 0.6s;
+    }
+
+    .bars div:nth-child(8) {
+      animation-delay: 0.7s;
+    }
+
+    .bars div:nth-child(9) {
+      animation-delay: 0.8s;
+    }
+
+    .bars div:nth-child(10) {
+      animation-delay: 0.9s;
     }
 
     /* Keyframe animation for the bars */
@@ -150,7 +183,7 @@
         height: 30px;
       }
       50% {
-        height: 70px;
+        height: 60px;
       }
       100% {
         height: 30px;
@@ -269,13 +302,9 @@
 </head>
 <body>
   <div>
-    <div id="bars">
+    <div id="barsContainer">
       <div class="bars">
         <div></div><div></div><div></div><div></div><div></div>
-      </div>
-    </div>
-    <div id="barsDown">
-      <div class="bars">
         <div></div><div></div><div></div><div></div><div></div>
       </div>
     </div>
