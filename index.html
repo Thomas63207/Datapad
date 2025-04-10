@@ -275,75 +275,46 @@
       for (const messageId in messages) {
         const message = messages[messageId].message;
         const timestamp = messages[messageId].timestamp;
-
-        let formattedTime = "Unknown time";
-
-        if (timestamp && !isNaN(new Date(timestamp).getTime())) {
-          const dateObj = new Date(timestamp);
-          formattedTime = dateObj.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          });
-        }
-
-        const messageElement = document.createElement('div');
-        messageElement.textContent = `${formattedTime}: ${message}`;
+        const messageElement = document.createElement('p');
+        messageElement.textContent = `${timestamp}: ${message}`;
         messageContainer.appendChild(messageElement);
       }
     });
 
     function updateView() {
       const dmControls = document.getElementById('dmControls');
-      const sendMessageBtn = document.getElementById('sendMessageBtn');
-      const dmMessageInput = document.getElementById('dmMessageInput');
-      const viewerElements = document.querySelectorAll('.viewer');
-
+      const toggleButton = document.getElementById('toggleDMMode');
       if (isDM) {
-        // When in DM mode, show DM controls (message input and send button)
         dmControls.classList.add('dm-only');
-        sendMessageBtn.style.display = 'inline-block';
-        dmMessageInput.style.display = 'inline-block';
-
-        viewerElements.forEach(element => element.classList.remove('viewer')); // Show viewer elements in DM mode
-
-        // Apply the DM-specific button style
-        document.body.classList.add('dm-mode');
       } else {
-        // When not in DM mode, hide the DM controls
         dmControls.classList.remove('dm-only');
-        sendMessageBtn.style.display = 'none';
-        dmMessageInput.style.display = 'none';
-
-        viewerElements.forEach(element => element.classList.add('viewer')); // Hide viewer elements when not in DM mode
-
-        // Hide the clear message button in non-DM mode
-        document.getElementById('clearMessagesBtn').style.display = 'none';
-
-        // Remove the DM-specific button style
-        document.body.classList.remove('dm-mode');
       }
+      toggleButton.textContent = isDM ? 'Switch to Viewer Mode' : 'Switch to DM Mode';
     }
 
-    // Call updateView initially to make sure it’s set to the correct state
     updateView();
   </script>
 </head>
 <body>
-  <div>
-    <div id="barsContainer">
-      <div class="bars">
-        <div></div><div></div><div></div><div></div><div></div>
-        <div></div><div></div><div></div><div></div><div></div>
-      </div>
-    </div>
-
-    <div id="messageDisplay"></div>
-
-    <div id="dmControls">
-      <button id="toggleDMMode">Toggle DM Mode</button>
-      <input type="text" id="dmMessageInput" class="viewer" placeholder="Enter your DM message here" />
-      <button id="sendMessageBtn" class="viewer">Send Message</button>
-      <button id="clearMessagesBtn" class="viewer">Clear Messages</button>
+  <div id="messageDisplay"></div>
+  <div id="dmControls" class="viewer">
+    <input type="text" id="dmMessageInput" placeholder="Enter message here" />
+    <button id="sendMessageBtn">Send Message</button>
+    <button id="clearMessagesBtn">Clear Messages</button>
+    <button id="toggleDMMode">Switch to Viewer Mode</button>
+  </div>
+  <div id="barsContainer">
+    <div class="bars">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
     </div>
   </div>
 </body>
