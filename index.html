@@ -195,19 +195,21 @@
       }
     }
 
-    /* Positioning and size for the toggle DM mode button */
+    /* Adjusted position of the toggle DM button when not in DM mode */
     #toggleDMMode {
       position: absolute;
       top: 50px; /* Adjusted so it's a bit below the text box */
       left: 0.5in; /* Moves it a half inch from the left edge */
       width: 50%; /* Make it stretch to about the center of the screen */
-      font-size: 1.1em; /* Same font size as other buttons */
+      font-size: 1.2em; /* Adjust size when not in DM mode */
       max-width: 300px;
     }
 
-    /* Hide the button when not in DM mode */
+    /* Smaller and left-positioned DM button in DM mode */
     .dm-mode #toggleDMMode {
-      display: none;
+      left: 0.2in; /* Move to the left */
+      width: 30%; /* Make it smaller */
+      font-size: 1em; /* Adjust size */
     }
   </style>
 
@@ -307,49 +309,42 @@
         // Apply the DM-specific button style
         document.body.classList.add('dm-mode');
       } else {
-        // Hide DM controls when not in DM mode
+        // When not in DM mode, hide the DM controls
         dmControls.classList.remove('dm-only');
         sendMessageBtn.style.display = 'none';
         dmMessageInput.style.display = 'none';
 
         viewerElements.forEach(element => element.classList.add('viewer')); // Hide viewer elements when not in DM mode
 
+        // Hide the clear message button in non-DM mode
+        document.getElementById('clearMessagesBtn').style.display = 'none';
+
         // Remove the DM-specific button style
         document.body.classList.remove('dm-mode');
       }
     }
 
-    window.onload = function() {
-      updateView();
-    };
+    // Call updateView initially to make sure it’s set to the correct state
+    updateView();
   </script>
 </head>
 <body>
-
-  <div id="messageDisplay"></div>
-
-  <div id="dmControls" class="viewer">
-    <input type="text" id="dmMessageInput" placeholder="Type your message...">
-    <button id="sendMessageBtn">Send Message</button>
-    <button id="clearMessagesBtn">Clear Messages</button>
-    <div id="barsContainer" class="viewer">
+  <div>
+    <div id="barsContainer">
       <div class="bars">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div>
       </div>
     </div>
+
+    <div id="messageDisplay"></div>
+
+    <div id="dmControls">
+      <button id="toggleDMMode">Toggle DM Mode</button>
+      <input type="text" id="dmMessageInput" class="viewer" placeholder="Enter your DM message here" />
+      <button id="sendMessageBtn" class="viewer">Send Message</button>
+      <button id="clearMessagesBtn" class="viewer">Clear Messages</button>
+    </div>
   </div>
-
-  <!-- DM Mode Toggle Button -->
-  <button id="toggleDMMode">Toggle DM Mode</button>
-
 </body>
 </html>
