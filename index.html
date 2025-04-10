@@ -119,26 +119,25 @@
     #bars, #barsDown {
       display: flex;
       justify-content: space-between;
-      width: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
+      width: 80%;
+      position: relative;
+      top: 50px; /* Adjust the position */
     }
 
     .bars {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      position: absolute;
+      position: relative;
       top: 0;
-      left: 0;
     }
 
     .bars div {
-      width: 5px;
-      height: 50px;
+      width: 8px;
+      height: 40px;
       background-color: rgb(145, 240, 249);
-      animation: wave 0.5s ease-in-out infinite;
+      border-radius: 5px;
+      animation: wave 1.5s ease-in-out infinite alternate;
     }
 
     #barsDown div {
