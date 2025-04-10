@@ -295,49 +295,55 @@
     function updateView() {
       const dmControls = document.getElementById('dmControls');
       const sendMessageBtn = document.getElementById('sendMessageBtn');
-      const messageDisplay = document.getElementById('messageDisplay');
-      const toggleDMMode = document.getElementById('toggleDMMode');
-      const viewerClass = document.querySelector('.viewer');
-      const dmClass = document.querySelector('.dm-only');
+      const dmMessageInput = document.getElementById('dmMessageInput');
+      const viewerElements = document.querySelectorAll('.viewer');
 
       if (isDM) {
-        messageDisplay.classList.add('viewer');
-        toggleDMMode.textContent = "Switch to Viewer Mode";
-        sendMessageBtn.style.display = 'block';
+        // When in DM mode, show DM controls (message input and send button)
+        dmControls.classList.add('dm-only');
+        sendMessageBtn.style.display = 'inline-block';
+        dmMessageInput.style.display = 'inline-block';
+
+        viewerElements.forEach(element => element.classList.remove('viewer')); // Show viewer elements in DM mode
+
+        // Apply the DM-specific button style
+        document.body.classList.add('dm-mode');
       } else {
-        messageDisplay.classList.remove('viewer');
-        toggleDMMode.textContent = "Switch to DM Mode";
+        // When not in DM mode, hide the DM controls
+        dmControls.classList.remove('dm-only');
         sendMessageBtn.style.display = 'none';
+        dmMessageInput.style.display = 'none';
+
+        viewerElements.forEach(element => element.classList.add('viewer')); // Hide viewer elements when not in DM mode
+
+        // Hide the clear message button in non-DM mode
+        document.getElementById('clearMessagesBtn').style.display = 'none';
+
+        // Remove the DM-specific button style
+        document.body.classList.remove('dm-mode');
       }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      updateView();
-    });
+    // Call updateView initially to make sure it’s set to the correct state
+    updateView();
   </script>
 </head>
 <body>
-  <div id="messageDisplay"></div>
+  <div>
+    <div id="barsContainer">
+      <div class="bars">
+        <div></div><div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div><div></div>
+      </div>
+    </div>
 
-  <div id="dmControls" class="dm-only">
-    <textarea id="dmMessageInput" placeholder="Enter your message here..." rows="4"></textarea>
-    <button id="sendMessageBtn">Send Message</button>
-    <button id="clearMessagesBtn">Clear Messages</button>
-    <button id="toggleDMMode">Switch to Viewer Mode</button>
-  </div>
+    <div id="messageDisplay"></div>
 
-  <div id="barsContainer">
-    <div class="bars">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+    <div id="dmControls">
+      <button id="toggleDMMode">Toggle DM Mode</button>
+      <input type="text" id="dmMessageInput" class="viewer" placeholder="Enter your DM message here" />
+      <button id="sendMessageBtn" class="viewer">Send Message</button>
+      <button id="clearMessagesBtn" class="viewer">Clear Messages</button>
     </div>
   </div>
 </body>
