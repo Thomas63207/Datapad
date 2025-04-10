@@ -9,16 +9,16 @@
   <style>
     /* Define the custom Moonhouse font */
     @font-face {
-      font-family: 'Moonhouse'; /* Custom name for the font */
-      src: url('Moonhouse-yE5M.ttf') format('truetype'); /* Path to the font file */
+      font-family: 'Moonhouse'; 
+      src: url('Moonhouse-yE5M.ttf') format('truetype'); 
       font-weight: normal;
       font-style: normal;
     }
 
     body {
       background-color: black;
-      color: rgb(145, 240, 249); /* Light cyan text */
-      font-family: 'Moonhouse', Courier, monospace; /* Apply custom Moonhouse font */
+      color: rgb(145, 240, 249); 
+      font-family: 'Moonhouse', Courier, monospace; 
       margin: 0;
       padding: 0;
       display: flex;
@@ -37,15 +37,15 @@
       width: 80vw;
       height: 70vh;
       overflow-y: auto;
-      overflow-x: hidden; /* Prevent horizontal scrolling */
-      border: 2px solid rgb(145, 240, 249); /* Light cyan border */
+      overflow-x: hidden; 
+      border: 2px solid rgb(145, 240, 249); 
       padding: 10px;
       background-color: black;
       margin-bottom: 20px;
       font-size: 1.2em;
-      white-space: normal; /* Allow text to wrap naturally */
-      word-wrap: break-word; /* Break long words if necessary */
-      line-height: 1.6; /* Spacing between lines for better readability */
+      white-space: normal; 
+      word-wrap: break-word; 
+      line-height: 1.6; 
     }
 
     #dmControls {
@@ -60,11 +60,11 @@
       font-family: 'Moonhouse', Courier, monospace;
       padding: 10px;
       background-color: black;
-      color: rgb(145, 240, 249); /* Light cyan text */
-      border: 2px solid rgb(145, 240, 249); /* Light cyan border */
+      color: rgb(145, 240, 249); 
+      border: 2px solid rgb(145, 240, 249); 
       font-size: 1.1em;
-      width: 80%; /* Make inputs take up most of the width */
-      max-width: 500px; /* Limit width */
+      width: 80%; 
+      max-width: 500px; 
     }
 
     button {
@@ -72,7 +72,7 @@
     }
 
     button:hover {
-      background-color: rgb(145, 240, 249); /* Light cyan background on hover */
+      background-color: rgb(145, 240, 249); 
       color: black;
     }
 
@@ -84,23 +84,38 @@
       display: block;
     }
 
-    /* Adjust margins and text for better fit */
-    #messageDisplay {
-      margin-top: 10px;
+    #bars, #barsDown {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      height: 50px;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 20px;
     }
 
-    /* Make text look like it’s from a Star Wars screen */
-    ::-webkit-scrollbar {
-      width: 10px;
+    .bar {
+      width: 5px;
+      height: 20px;
+      background-color: rgb(145, 240, 249); 
+      margin: 0 2px;
+      animation: wave 1s infinite ease-in-out;
     }
 
-    ::-webkit-scrollbar-thumb {
-      background-color: rgb(145, 240, 249); /* Light cyan scrollbar thumb */
-      border-radius: 5px;
+    .bar:nth-child(even) {
+      animation-delay: -0.5s;
     }
 
-    ::-webkit-scrollbar-track {
-      background-color: #000;
+    @keyframes wave {
+      0% {
+        height: 20px;
+      }
+      50% {
+        height: 50px;
+      }
+      100% {
+        height: 20px;
+      }
     }
 
     /* Mobile responsiveness */
@@ -111,12 +126,12 @@
 
       #messageDisplay {
         width: 100%;
-        height: 50vh; /* Adjust for smaller screens */
+        height: 50vh;
       }
 
       input, button {
-        width: 100%; /* Make buttons and inputs full-width on small screens */
-        font-size: 1em; /* Adjust font size */
+        width: 100%; 
+        font-size: 1em;
       }
     }
   </style>
@@ -140,7 +155,7 @@
     const analytics = getAnalytics(app);
     const database = getDatabase();
 
-    let isDM = true; 
+    let isDM = true;
 
     document.getElementById('toggleDMMode').addEventListener('click', function() {
       isDM = !isDM;
@@ -200,40 +215,49 @@
       }
     });
 
-function updateView() {
-  const dmControls = document.getElementById('dmControls');
-  const sendMessageBtn = document.getElementById('sendMessageBtn');
-  const dmMessageInput = document.getElementById('dmMessageInput');
-  const viewerElements = document.querySelectorAll('.viewer');
-  const dmOnlyElements = document.querySelectorAll('.dm-only');
+    function updateView() {
+      const dmControls = document.getElementById('dmControls');
+      const sendMessageBtn = document.getElementById('sendMessageBtn');
+      const dmMessageInput = document.getElementById('dmMessageInput');
+      const viewerElements = document.querySelectorAll('.viewer');
+      const dmOnlyElements = document.querySelectorAll('.dm-only');
 
-  if (isDM) {
-    // When in DM mode, show all DM controls (message input and send button)
-    dmControls.classList.add('dm-only');
-    sendMessageBtn.classList.add('dm-only');
-    dmMessageInput.classList.add('dm-only');
-    viewerElements.forEach(element => element.classList.remove('viewer'));
-  } else {
-    // When not in DM mode, hide the send and clear message buttons, and show only DM toggle and message input
-    dmControls.classList.remove('dm-only');
-    sendMessageBtn.classList.remove('dm-only');
-    dmMessageInput.classList.remove('dm-only');
-    viewerElements.forEach(element => element.classList.add('viewer'));
-
-    // Hide buttons for sending/clearing messages in non-DM mode
-    sendMessageBtn.style.display = 'none';
-    document.getElementById('clearMessagesBtn').style.display = 'none';
-  }
-}
-
+      if (isDM) {
+        dmControls.classList.add('dm-only');
+        sendMessageBtn.classList.add('dm-only');
+        dmMessageInput.classList.add('dm-only');
+        viewerElements.forEach(element => element.classList.remove('viewer'));
+      } else {
+        dmControls.classList.remove('dm-only');
+        sendMessageBtn.classList.remove('dm-only');
+        dmMessageInput.classList.remove('dm-only');
+        viewerElements.forEach(element => element.classList.add('viewer'));
+        sendMessageBtn.style.display = 'none';
+        document.getElementById('clearMessagesBtn').style.display = 'none';
+      }
+    }
 
     updateView();
-
   </script>
 </head>
 <body>
   <div>
     <h2>DM Message Board</h2>
+    <div id="bars">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div id="barsDown">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+
     <div id="messageDisplay">Waiting for message...</div>
     
     <div id="dmControls">
