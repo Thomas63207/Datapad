@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DM Message Board</title>
+
+  <!-- Include custom font -->
+  <style>
+    /* Define the custom Moonhouse font */
+    @font-face {
+      font-family: 'Moonhouse'; /* Custom name for the font */
+      src: url('Moonhouse-yE5M.ttf') format('truetype'); /* Path to the font file */
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body {
+      background-color: black;
+      color: rgb(145, 240, 249); /* Light cyan text */
+      font-family: 'Moonhouse', Courier, monospace; /* Apply custom Moonhouse font */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    #messageDisplay {
+      width: 80%;
+      height: 70vh;
+      overflow-y: auto;
+      border: 2px solid rgb(145, 240, 249); /* Light cyan border */
+      padding: 10px;
+      background-color: black;
+      margin-bottom: 20px;
+      font-size: 1.2em;
+      white-space: pre-wrap;
+      line-height: 1.6; /* Spacing between lines for better readability */
+    }
+
+    #dmControls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    input, button {
+      font-family: 'Moonhouse', Courier, monospace;
+      padding: 10px;
+      background-color: black;
+      color: rgb(145, 240, 249); /* Light cyan text */
+      border: 2px solid rgb(145, 240, 249); /* Light cyan border */
+      font-size: 1.1em;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: rgb(145, 240, 249); /* Light cyan background on hover */
+      color: black;
+    }
+
+    .viewer {
+      display: none;
+    }
+
+    .dm-only {
+      display: block;
+    }
+
+    /* Adjusting margins and text for better fit */
+    #messageDisplay {
+      margin-top: 10px;
+    }
+
+    /* Make text look like it’s from a Star Wars screen */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgb(145, 240, 249); /* Light cyan scrollbar thumb */
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: #000;
+    }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+    import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-nToXhSqxPBjw_F0b0HbHgLS9EWp4y9Q",
+      authDomain: "datapad-5cddf.firebaseapp.com",
+      projectId: "datapad-5cddf",
+      storageBucket: "datapad-5cddf.firebasestorage.app",
+      messagingSenderId: "1053226423851",
+      appId: "1:1053226423851:web:929febc41e6cca44d8fc6e",
+      measurementId: "G-LGK4RTQHYZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const database = getDatabase();
+
+    let isDM = true; 
+
+    document.getElementById('toggleDMMode').addEventListener('click', function() {
+      isDM = !isDM;
+      updateView();
+    });
+
+    document.getElementById('sendMessageBtn').addEventListener('click', function() {
+      if (isDM) {
+        const message = document.getElementById('dmMessageInput').value;
+        if (message.trim()) {
+          const messageRef = ref(database, 'messages');
+          const newMessageRef = push(messageRef);
+          set(newMessageRef, {
+            message: message,
+            timestamp: new Date().toISOString(),
+          }).then(() => {
+            console.log("Message sent to Firebase!");
+            document.getElementById('dmMessageInput').value = ''; 
+          }).catch((error) => {
+            console.error("Error sending message: ", error);
+          });
+        }
+      }
+    });
+
+    document.getElementById('clearMessagesBtn').addEventListener('click', function() {
+      const messagesRef = ref(database, 'messages');
+      remove(messagesRef).then(() => {
+        console.log("Messages cleared from Firebase!");
+      }).catch((error) => {
+        console.error("Error clearing messages: ", error);
+      });
+    });
+
+    const messageRef = ref(database, 'messages');
+    onValue(messageRef, (snapshot) => {
+      const messages = snapshot.val();
+      const messageContainer = document.getElementById('messageDisplay');
+      messageContainer.innerHTML = ''; 
+      for (const messageId in messages) {
+        const message = messages[messageId].message;
+        const timestamp = messages[messageId].timestamp;
+
+        let formattedTime = "Unknown time";
+
+        if (timestamp && !isNaN(new Date(timestamp).getTime())) {
+          const dateObj = new Date(timestamp);
+          formattedTime = dateObj.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        }
+
+        const messageElement = document.createElement('div');
+        messageElement.textContent = `${formattedTime}: ${message}`;
+        messageContainer.appendChild(messageElement);
+      }
+    });
+
+    function updateView() {
+      const dmControls = document.getElementById('dmControls');
+      const sendMessageBtn = document.getElementById('sendMessageBtn');
+      const dmMessageInput = document.getElementById('dmMessageInput');
+      const viewerElements = document.querySelectorAll('.viewer');
+      const dmOnlyElements = document.querySelectorAll('.dm-only');
+
+      if (isDM) {
+        dmControls.classList.add('dm-only');
+        sendMessageBtn.classList.add('dm-only');
+        dmMessageInput.classList.add('dm-only');
+        viewerElements.forEach(element => element.classList.remove('viewer'));
+      } else {
+        dmControls.classList.remove('dm-only');
+        sendMessageBtn.classList.remove('dm-only');
+        dmMessageInput.classList.remove('dm-only');
+        viewerElements.forEach(element => element.classList.add('viewer'));
+      }
+    }
+
+    updateView();
+
+  </script>
+</head>
+<body>
+  <div>
+    <h2>DM Message Board</h2>
+    <div id="messageDisplay">Waiting for message...</div>
+    
+    <div id="dmControls">
+      <input type="text" id="dmMessageInput" class="dm-only" placeholder="Type a message..." />
+      <button id="sendMessageBtn" class="dm-only">Send Message</button>
+      <button id="clearMessagesBtn">Clear Messages</button>
+      <button id="toggleDMMode">Toggle DM Mode</button>
+    </div>
+  </div>
+</body>
+</html>
