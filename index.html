@@ -33,8 +33,8 @@
     }
 
     #messageDisplay {
-      width: 80%;
-      height: 70vh;
+      width: 80vw;  /* 80% of the viewport width */
+      height: 60vh; /* 60% of the viewport height */
       overflow-y: auto;
       border: 2px solid rgb(145, 240, 249); /* Light cyan border */
       padding: 10px;
@@ -43,6 +43,25 @@
       font-size: 1.2em;
       white-space: pre-wrap;
       line-height: 1.6; /* Spacing between lines for better readability */
+      word-wrap: break-word; /* Ensure long words break and wrap */
+      box-sizing: border-box; /* Include padding and border in width/height */
+      border-radius: 10px;
+    }
+
+    /* Adjust for smaller screens */
+    @media (max-width: 768px) {
+      #messageDisplay {
+        width: 90vw;  /* 90% of the viewport width for tablets */
+        height: 50vh; /* 50% of the viewport height for tablets */
+      }
+    }
+
+    @media (max-width: 480px) {
+      #messageDisplay {
+        width: 95vw;  /* 95% of the viewport width for mobile phones */
+        height: 40vh; /* 40% of the viewport height for phones */
+        font-size: 1em;  /* Adjust font size for better readability */
+      }
     }
 
     #dmControls {
