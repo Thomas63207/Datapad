@@ -200,25 +200,32 @@
       }
     });
 
-    function updateView() {
-      const dmControls = document.getElementById('dmControls');
-      const sendMessageBtn = document.getElementById('sendMessageBtn');
-      const dmMessageInput = document.getElementById('dmMessageInput');
-      const viewerElements = document.querySelectorAll('.viewer');
-      const dmOnlyElements = document.querySelectorAll('.dm-only');
+function updateView() {
+  const dmControls = document.getElementById('dmControls');
+  const sendMessageBtn = document.getElementById('sendMessageBtn');
+  const dmMessageInput = document.getElementById('dmMessageInput');
+  const viewerElements = document.querySelectorAll('.viewer');
+  const dmOnlyElements = document.querySelectorAll('.dm-only');
 
-      if (isDM) {
-        dmControls.classList.add('dm-only');
-        sendMessageBtn.classList.add('dm-only');
-        dmMessageInput.classList.add('dm-only');
-        viewerElements.forEach(element => element.classList.remove('viewer'));
-      } else {
-        dmControls.classList.remove('dm-only');
-        sendMessageBtn.classList.remove('dm-only');
-        dmMessageInput.classList.remove('dm-only');
-        viewerElements.forEach(element => element.classList.add('viewer'));
-      }
-    }
+  if (isDM) {
+    // When in DM mode, show all DM controls (message input and send button)
+    dmControls.classList.add('dm-only');
+    sendMessageBtn.classList.add('dm-only');
+    dmMessageInput.classList.add('dm-only');
+    viewerElements.forEach(element => element.classList.remove('viewer'));
+  } else {
+    // When not in DM mode, hide the send and clear message buttons, and show only DM toggle and message input
+    dmControls.classList.remove('dm-only');
+    sendMessageBtn.classList.remove('dm-only');
+    dmMessageInput.classList.remove('dm-only');
+    viewerElements.forEach(element => element.classList.add('viewer'));
+
+    // Hide buttons for sending/clearing messages in non-DM mode
+    sendMessageBtn.style.display = 'none';
+    document.getElementById('clearMessagesBtn').style.display = 'none';
+  }
+}
+
 
     updateView();
 
