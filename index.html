@@ -23,7 +23,7 @@
       padding: 0;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       height: 100vh;
       flex-direction: column;
       overflow: hidden; /* Prevent body overflow */
@@ -50,6 +50,9 @@
       gap: 10px;
       justify-content: center;
       align-items: center;
+      width: 80%; /* Adjust to make sure controls don't stretch too wide */
+      max-width: 500px;
+      position: relative;
     }
 
     input, button {
@@ -59,7 +62,7 @@
       color: rgb(145, 240, 249); /* Light cyan text */
       border: 2px solid rgb(145, 240, 249); /* Light cyan border */
       font-size: 1.1em;
-      width: 80%; /* Make inputs take up most of the width */
+      width: 100%; /* Make inputs take up most of the width */
       max-width: 500px; /* Limit width */
     }
 
@@ -122,6 +125,7 @@
       display: flex;
       justify-content: center;
       gap: 5px; /* Adjust spacing between bars */
+      margin-bottom: 10px; /* Space between bars and text box */
     }
 
     .bars {
@@ -188,6 +192,16 @@
       100% {
         height: 30px;
       }
+    }
+
+    /* Adjusted position of the toggle DM button when not in DM mode */
+    #toggleDMMode {
+      position: absolute;
+      top: 50px; /* Adjusted so it's a bit below the text box */
+      left: 0.5in; /* Moves it a half inch from the left edge */
+      width: 50%; /* Make it stretch to about the center of the screen */
+      font-size: 1.2em; /* Adjust size when not in DM mode */
+      max-width: 300px;
     }
   </style>
 
