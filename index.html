@@ -294,37 +294,26 @@
       }
     });
 
-    function updateView() {
-      const dmControls = document.getElementById('dmControls');
-      const sendMessageBtn = document.getElementById('sendMessageBtn');
-      const dmMessageInput = document.getElementById('dmMessageInput');
-      const viewerElements = document.querySelectorAll('.viewer');
+function updateView() {
+  const dmControls = document.getElementById('dmControls');
+  const sendMessageBtn = document.getElementById('sendMessageBtn');
+  const dmMessageInput = document.getElementById('dmMessageInput');
+  const clearMessagesBtn = document.getElementById('clearMessagesBtn');
 
-      if (isDM) {
-        // When in DM mode, show DM controls (message input and send button)
-        dmControls.classList.add('dm-only');
-        sendMessageBtn.style.display = 'inline-block';
-        dmMessageInput.style.display = 'inline-block';
+  if (isDM) {
+    document.body.classList.add('dm-mode');
 
-        viewerElements.forEach(element => element.classList.remove('viewer')); // Show viewer elements in DM mode
+    sendMessageBtn.classList.remove('invisible');
+    dmMessageInput.classList.remove('invisible');
+    clearMessagesBtn.classList.remove('invisible');
+  } else {
+    document.body.classList.remove('dm-mode');
 
-        // Apply the DM-specific button style
-        document.body.classList.add('dm-mode');
-      } else {
-        // When not in DM mode, hide the DM controls
-        dmControls.classList.remove('dm-only');
-        sendMessageBtn.style.display = 'none';
-        dmMessageInput.style.display = 'none';
-
-        viewerElements.forEach(element => element.classList.add('viewer')); // Hide viewer elements when not in DM mode
-
-        // Hide the clear message button in non-DM mode
-        document.getElementById('clearMessagesBtn').style.display = 'none';
-
-        // Remove the DM-specific button style
-        document.body.classList.remove('dm-mode');
-      }
-    }
+    sendMessageBtn.classList.add('invisible');
+    dmMessageInput.classList.add('invisible');
+    clearMessagesBtn.classList.add('invisible');
+  }
+}
 
     // Call updateView initially to make sure it’s set to the correct state
     updateView();
