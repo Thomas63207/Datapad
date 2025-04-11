@@ -247,23 +247,33 @@
     });
   });
 
-// ✅ NEW: TTS with "Fred" Voice
 function speakMessageText(messageText) {
-  const voices = speechSynthesis.getVoices();
-  const voice = voices.find(v => v.name === 'Fred'); // Try "Fred", fall back if needed
+  const tryToSpeak = () => {
+    const voices = speechSynthesis.getVoices();
+    const voice = voices.find(v => v.name === 'Fred');
 
-  const utterance = new SpeechSynthesisUtterance(messageText);
-  if (voice) {
-    utterance.voice = voice;
+    const utterance = new SpeechSynthesisUtterance(messageText);
+    if (voice) {
+      utterance.voice = voice;
+      console.log("Using voice:", voice.name);
+    } else {
+      console.warn("Fred voice not found, using default.");
+    }
+
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    speechSynthesis.speak(utterance);
+  };
+
+  // Delay slightly to ensure voices are ready
+  if (!speechSynthesis.getVoices().length) {
+    speechSynthesis.onvoiceschanged = tryToSpeak;
   } else {
-    console.warn("Fred voice not found, using default.");
+    setTimeout(tryToSpeak, 100);
   }
-
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
-
-  speechSynthesis.speak(utterance);
 }
+
 
 speechSynthesis.onvoiceschanged = () => {
   // Optional: preload voices or log for debugging
