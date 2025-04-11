@@ -331,6 +331,24 @@ document.getElementById('speakLatestBtn').addEventListener('click', function () 
   }
 
   updateView();
+
+  speechSynthesis.onvoiceschanged = () => {
+  const voices = speechSynthesis.getVoices();
+  const voiceListDiv = document.createElement('div');
+  voiceListDiv.style.whiteSpace = 'pre-wrap';
+  voiceListDiv.style.marginTop = '20px';
+  voiceListDiv.style.fontSize = '0.9em';
+  voiceListDiv.style.border = '1px solid rgb(145, 240, 249)';
+  voiceListDiv.style.padding = '10px';
+  voiceListDiv.style.maxHeight = '200px';
+  voiceListDiv.style.overflowY = 'scroll';
+  voiceListDiv.style.backgroundColor = '#000';
+  voiceListDiv.style.color = 'rgb(145, 240, 249)';
+  voiceListDiv.innerText = 'Available Voices:\n\n' + voices.map(v => `• ${v.name} (${v.lang})`).join('\n');
+
+  document.body.appendChild(voiceListDiv);
+};
+
 </script>
 </head>
 <body>
