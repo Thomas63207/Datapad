@@ -15,19 +15,17 @@
       font-style: normal;
     }
 
-    body {
-      background-color: black;
-      color: rgb(145, 240, 249); /* Light cyan text */
-      font-family: 'Moonhouse', Courier, monospace; /* Apply custom Moonhouse font */
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      height: 100vh;
-      flex-direction: column;
-      overflow: hidden; /* Prevent body overflow */
-    }
+body {
+  background-color: black;
+  color: rgb(145, 240, 249);
+  font-family: 'Moonhouse', Courier, monospace;
+  margin: 0;
+  padding: 10px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
 
     #messageDisplay {
       width: 80vw;
