@@ -248,23 +248,32 @@
   });
 
 function speakMessageText(messageText) {
-  const tryToSpeak = () => {
+  function trySpeak() {
     const voices = speechSynthesis.getVoices();
-    const voice = voices.find(v => v.name === 'Fred');
+    const fred = voices.find(v => v.name === 'Fred');
 
     const utterance = new SpeechSynthesisUtterance(messageText);
-    if (voice) {
-      utterance.voice = voice;
-      console.log("Using voice:", voice.name);
+    if (fred) {
+      utterance.voice = fred;
+      console.log("✅ Using Fred!");
     } else {
-      console.warn("Fred voice not found, using default.");
+      console.warn("❌ Fred not found. Using default voice.");
     }
 
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
 
     speechSynthesis.speak(utterance);
-  };
+  }
+
+  // Safari sometimes doesn't have voices ready immediately
+  if (speechSynthesis.getVoices().length === 0) {
+    speechSynthesis.onvoiceschanged = trySpeak;
+  } else {
+    trySpeak();
+  }
+}
+
 
   // Delay slightly to ensure voices are ready
   if (!speechSynthesis.getVoices().length) {
