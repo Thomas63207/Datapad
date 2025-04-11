@@ -72,27 +72,6 @@
     background-color: rgb(145, 240, 249);
     color: black;
   }
-  
-  .speech-btn {
-  width: 40px;
-  height: 40px;
-  margin-top: 10px;
-  margin-left: calc(10px + 2px); /* align with #messageDisplay padding + border */
-  background-color: black;
-  color: rgb(145, 240, 249);
-  border: 2px solid rgb(145, 240, 249);
-  font-size: 1.2em;
-  cursor: pointer;
-  font-family: 'Moonhouse', Courier, monospace;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.speech-btn:hover {
-  background-color: rgb(145, 240, 249);
-  color: black;
-}
 
   .invisible {
     display: none !important;
@@ -193,123 +172,106 @@
 </style>
 
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-  import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+    import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA-nToXhSqxPBjw_F0b0HbHgLS9EWp4y9Q",
-    authDomain: "datapad-5cddf.firebaseapp.com",
-    projectId: "datapad-5cddf",
-    storageBucket: "datapad-5cddf.firebasestorage.app",
-    messagingSenderId: "1053226423851",
-    appId: "1:1053226423851:web:929febc41e6cca44d8fc6e",
-    measurementId: "G-LGK4RTQHYZ"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-nToXhSqxPBjw_F0b0HbHgLS9EWp4y9Q",
+      authDomain: "datapad-5cddf.firebaseapp.com",
+      projectId: "datapad-5cddf",
+      storageBucket: "datapad-5cddf.firebasestorage.app",
+      messagingSenderId: "1053226423851",
+      appId: "1:1053226423851:web:929febc41e6cca44d8fc6e",
+      measurementId: "G-LGK4RTQHYZ"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const database = getDatabase();
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const database = getDatabase();
 
-  let isDM = true;
+    let isDM = true;
 
-  document.getElementById('toggleDMMode').addEventListener('click', function () {
-    isDM = !isDM;
-    updateView();
-  });
-
-  document.getElementById('sendMessageBtn').addEventListener('click', function () {
-    if (isDM) {
-      const message = document.getElementById('dmMessageInput').value;
-      if (message.trim()) {
-        const messageRef = ref(database, 'messages');
-        const newMessageRef = push(messageRef);
-        set(newMessageRef, {
-          message: message,
-          timestamp: new Date().toISOString(),
-        }).then(() => {
-          console.log("Message sent to Firebase!");
-          document.getElementById('dmMessageInput').value = '';
-        }).catch((error) => {
-          console.error("Error sending message: ", error);
-        });
-      }
-    }
-  });
-
-  document.getElementById('clearMessagesBtn').addEventListener('click', function () {
-    const messagesRef = ref(database, 'messages');
-    remove(messagesRef).then(() => {
-      console.log("Messages cleared from Firebase!");
-    }).catch((error) => {
-      console.error("Error clearing messages: ", error);
+    document.getElementById('toggleDMMode').addEventListener('click', function () {
+      isDM = !isDM;
+      updateView();
     });
-  });
 
-  // ✅ NEW: Text-to-Speech Button Logic
-  document.getElementById('speakLatestBtn').addEventListener('click', function () {
-    const messageContainer = document.getElementById('messageDisplay');
-    const lastMessageElement = messageContainer.lastElementChild;
+    document.getElementById('sendMessageBtn').addEventListener('click', function () {
+      if (isDM) {
+        const message = document.getElementById('dmMessageInput').value;
+        if (message.trim()) {
+          const messageRef = ref(database, 'messages');
+          const newMessageRef = push(messageRef);
+          set(newMessageRef, {
+            message: message,
+            timestamp: new Date().toISOString(),
+          }).then(() => {
+            console.log("Message sent to Firebase!");
+            document.getElementById('dmMessageInput').value = '';
+          }).catch((error) => {
+            console.error("Error sending message: ", error);
+          });
+        }
+      }
+    });
 
-    if (lastMessageElement) {
-      const fullText = lastMessageElement.textContent;
-      const parts = fullText.split(': ');
-      const messageText = parts.length > 1 ? parts.slice(1).join(': ') : fullText;
+    document.getElementById('clearMessagesBtn').addEventListener('click', function () {
+      const messagesRef = ref(database, 'messages');
+      remove(messagesRef).then(() => {
+        console.log("Messages cleared from Firebase!");
+      }).catch((error) => {
+        console.error("Error clearing messages: ", error);
+      });
+    });
 
-      if (messageText.trim()) {
-        const utterance = new SpeechSynthesisUtterance(messageText);
-        speechSynthesis.speak(utterance);
+    const messageRef = ref(database, 'messages');
+    onValue(messageRef, (snapshot) => {
+      const messages = snapshot.val();
+      const messageContainer = document.getElementById('messageDisplay');
+      messageContainer.innerHTML = '';
+      for (const messageId in messages) {
+        const message = messages[messageId].message;
+        const timestamp = messages[messageId].timestamp;
+
+        let formattedTime = "Unknown time";
+
+        if (timestamp && !isNaN(new Date(timestamp).getTime())) {
+          const dateObj = new Date(timestamp);
+          formattedTime = dateObj.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        }
+
+        const messageElement = document.createElement('div');
+        messageElement.textContent = `${formattedTime}: ${message}`;
+        messageContainer.appendChild(messageElement);
+      }
+    });
+
+    function updateView() {
+      const dmControls = document.getElementById('dmControls');
+      const sendMessageBtn = document.getElementById('sendMessageBtn');
+      const dmMessageInput = document.getElementById('dmMessageInput');
+      const clearMessagesBtn = document.getElementById('clearMessagesBtn');
+
+      if (isDM) {
+        document.body.classList.add('dm-mode');
+        sendMessageBtn.classList.remove('invisible');
+        dmMessageInput.classList.remove('invisible');
+        clearMessagesBtn.classList.remove('invisible');
+      } else {
+        document.body.classList.remove('dm-mode');
+        sendMessageBtn.classList.add('invisible');
+        dmMessageInput.classList.add('invisible');
+        clearMessagesBtn.classList.add('invisible');
       }
     }
-  });
 
-  const messageRef = ref(database, 'messages');
-  onValue(messageRef, (snapshot) => {
-    const messages = snapshot.val();
-    const messageContainer = document.getElementById('messageDisplay');
-    messageContainer.innerHTML = '';
-    for (const messageId in messages) {
-      const message = messages[messageId].message;
-      const timestamp = messages[messageId].timestamp;
-
-      let formattedTime = "Unknown time";
-
-      if (timestamp && !isNaN(new Date(timestamp).getTime())) {
-        const dateObj = new Date(timestamp);
-        formattedTime = dateObj.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-      }
-
-      const messageElement = document.createElement('div');
-      messageElement.textContent = `${formattedTime}: ${message}`;
-      messageContainer.appendChild(messageElement);
-    }
-  });
-
-  function updateView() {
-    const dmControls = document.getElementById('dmControls');
-    const sendMessageBtn = document.getElementById('sendMessageBtn');
-    const dmMessageInput = document.getElementById('dmMessageInput');
-    const clearMessagesBtn = document.getElementById('clearMessagesBtn');
-
-    if (isDM) {
-      document.body.classList.add('dm-mode');
-      sendMessageBtn.classList.remove('invisible');
-      dmMessageInput.classList.remove('invisible');
-      clearMessagesBtn.classList.remove('invisible');
-    } else {
-      document.body.classList.remove('dm-mode');
-      sendMessageBtn.classList.add('invisible');
-      dmMessageInput.classList.add('invisible');
-      clearMessagesBtn.classList.add('invisible');
-    }
-  }
-
-  updateView();
-</script>
+    updateView();
+  </script>
 </head>
 <body>
   <div>
@@ -321,7 +283,6 @@
     </div>
 
     <div id="messageDisplay"></div>
-    <button id="speakLatestBtn" class="speech-btn" title="Speak Last Message">🔊</button>
 
     <div id="dmControls">
       <button id="toggleDMMode">Toggle DM Mode</button>
