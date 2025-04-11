@@ -247,63 +247,22 @@
     });
   });
 
-function speakMessageText(messageText) {
-  function trySpeak() {
-    const voices = speechSynthesis.getVoices();
-    const fred = voices.find(v => v.name === 'Fred');
+  // ✅ NEW: Text-to-Speech Button Logic
+  document.getElementById('speakLatestBtn').addEventListener('click', function () {
+    const messageContainer = document.getElementById('messageDisplay');
+    const lastMessageElement = messageContainer.lastElementChild;
 
-    const utterance = new SpeechSynthesisUtterance(messageText);
-    if (fred) {
-      utterance.voice = fred;
-      console.log("✅ Using Fred!");
-    } else {
-      console.warn("❌ Fred not found. Using default voice.");
+    if (lastMessageElement) {
+      const fullText = lastMessageElement.textContent;
+      const parts = fullText.split(': ');
+      const messageText = parts.length > 1 ? parts.slice(1).join(': ') : fullText;
+
+      if (messageText.trim()) {
+        const utterance = new SpeechSynthesisUtterance(messageText);
+        speechSynthesis.speak(utterance);
+      }
     }
-
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-
-    speechSynthesis.speak(utterance);
-  }
-
-  // Safari sometimes doesn't have voices ready immediately
-  if (speechSynthesis.getVoices().length === 0) {
-    speechSynthesis.onvoiceschanged = trySpeak;
-  } else {
-    trySpeak();
-  }
-}
-
-
-  // Delay slightly to ensure voices are ready
-  if (!speechSynthesis.getVoices().length) {
-    speechSynthesis.onvoiceschanged = tryToSpeak;
-  } else {
-    setTimeout(tryToSpeak, 100);
-  }
-}
-
-
-speechSynthesis.onvoiceschanged = () => {
-  // Optional: preload voices or log for debugging
-  const voices = speechSynthesis.getVoices();
-  console.log("Available voices:", voices.map(v => v.name));
-};
-
-document.getElementById('speakLatestBtn').addEventListener('click', function () {
-  const messageContainer = document.getElementById('messageDisplay');
-  const lastMessageElement = messageContainer.lastElementChild;
-
-  if (lastMessageElement) {
-    const fullText = lastMessageElement.textContent;
-    const parts = fullText.split(': ');
-    const messageText = parts.length > 1 ? parts.slice(1).join(': ') : fullText;
-
-    if (messageText.trim()) {
-      speakMessageText(messageText);
-    }
-  }
-});
+  });
 
   const messageRef = ref(database, 'messages');
   onValue(messageRef, (snapshot) => {
@@ -350,37 +309,6 @@ document.getElementById('speakLatestBtn').addEventListener('click', function () 
   }
 
   updateView();
-
-setTimeout(() => {
-  const voices = speechSynthesis.getVoices();
-  if (!voices.length) {
-    console.warn("Voices not loaded yet. Trying again...");
-    return;
-  }
-
-  const voiceListDiv = document.createElement('div');
-  voiceListDiv.style.whiteSpace = 'pre-wrap';
-  voiceListDiv.style.marginTop = '20px';
-  voiceListDiv.style.fontSize = '0.9em';
-  voiceListDiv.style.border = '1px solid rgb(145, 240, 249)';
-  voiceListDiv.style.padding = '10px';
-  voiceListDiv.style.maxHeight = '200px';
-  voiceListDiv.style.overflowY = 'auto';
-  voiceListDiv.style.backgroundColor = '#000';
-  voiceListDiv.style.color = 'rgb(145, 240, 249)';
-  voiceListDiv.style.position = 'fixed';
-  voiceListDiv.style.bottom = '10px';
-  voiceListDiv.style.right = '10px';
-  voiceListDiv.style.width = '300px';
-  voiceListDiv.style.zIndex = '9999';
-
-  voiceListDiv.innerText = 'Available Voices:\n\n' +
-    voices.map(v => `• ${v.name} (${v.lang})`).join('\n');
-
-  document.body.appendChild(voiceListDiv);
-}, 500);
-
-
 </script>
 </head>
 <body>
